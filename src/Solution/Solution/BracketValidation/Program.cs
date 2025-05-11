@@ -1,52 +1,46 @@
-using System;
-
 namespace Solution.BracketValidation
 {
     public class BracketValidator
     {
         private class Node
         {
-            public char Data { get; set; }
-            public Node Next { get; set; }
-
-            public Node(char data)
-            {
-                Data = data;
-                Next = null;
-            }
+            public char Data;
+            public Node Next;
+            public Node(char data) => Data = data;
         }
 
         private Node top;
 
-        public bool ValidasiEkspresi(string ekspresi)
+        private void Push(char c) => top = new Node(c) { Next = top };
+
+        private char? Pop()
         {
-            top = null;
-            foreach (char c in ekspresi) {
-                if (c == '(' || c == '{' || c == '[') {
-                    Node newNode = new Node(c);
-                    newNode.Next = top;
-                    top = newNode;
-                }
-                else if (c == ')' || c == '}' || c == ']') {
-                    if (top == null) {
-                        return false;
-                    }
-
-                    char opening = top.Data;
-                    top = top.Next;
-
-                    if (!IsMatchingPair(opening, c)) {
-                        return false;
-                    }
-                }
-            }
-
-            return top == null;
+            if (top == null) return null;
+            char data = top.Data;
+            top = top.Next;
+            return data;
         }
 
-        private bool IsMatchingPair(char opening, char closing)
+        private bool IsEmpty() => top == null;
+
+        public bool ValidasiEkspresi(string ekspresi)
         {
-            return (opening == '(' && closing == ')') || (opening == '{' && closing == '}') || (opening == '[' && closing == ']');
+            top = null; // reset stack
+            foreach (char c in ekspresi)
+            {
+                if (c == '(' || c == '{' || c == '[')
+                    Push(c);
+                else if (c == ')' || c == '}' || c == ']')
+                {
+                    char? popped = Pop();
+                    if (popped == null ||
+                        (c == ')' && popped != '(') ||
+                        (c == '}' && popped != '{') ||
+                        (c == ']' && popped != '['))
+                        return false;
+                }
+            }
+            return IsEmpty();
         }
     }
 }

@@ -1,70 +1,101 @@
+using System;
+
 namespace Solution.BrowserHistory
 {
-
     public class Halaman
     {
         public string URL { get; set; }
-
-        public Halaman(string url)
-        {
-            URL = url;
-        }
+        public Halaman(string url) => URL = url;
     }
 
-    public class BrowserHistory
+    public class Node
     {
-        private class Node
-        {
-            public Halaman Data { get; set; }
-            public Node Next { get; set; }
+        public Halaman Data;
+        public Node Next;
+        public Node(Halaman data) => Data = data;
+    }
 
-            public Node(Halaman data)
-            {
-                Data = data;
-                Next = null;
-            }
-        }
-
+    public class StackManual
+    {
         private Node top;
 
-        public void KunjungiHalaman(string url)
+        public void Push(Halaman data)
         {
-            Halaman halaman = new Halaman(url);
-            Node newNode = new Node(halaman);
-            newNode.Next = top;
+            Node newNode = new Node(data) { Next = top };
             top = newNode;
         }
 
-        public string Kembali()
+        public Halaman Pop()
         {
-            if (top == null || top.Next == null) {
+            if (top == null) {
                 return null;
             }
-
-            string currentUrl = top.Data.URL;
+            
+            Halaman popped = top.Data;
             top = top.Next;
-            return currentUrl;
+            return popped;
         }
 
-        public string LihatHalamanSaatIni()
+        public Halaman Peek() => top?.Data;
+
+        public bool IsEmpty() => top == null;
+
+        public void PrintHistory()
         {
-            return top?.Data.URL;
+            Node current = top;
+            int count = 1;
+            while (current != null)
+            {
+                Console.WriteLine($"{count++}. {current.Data.URL}");
+                current = current.Next;
+            }
+        }
+    }
+
+    public class Browser
+    {
+        private StackManual history = new StackManual();
+
+        public void KunjungiHalaman(string url)
+        {
+            Console.WriteLine($"Mengunjungi halaman: {url}");
+            history.Push(new Halaman(url));
+        }
+
+        public void Kembali()
+        {
+            if (!history.IsEmpty())
+            {
+                history.Pop();
+                Console.WriteLine("Kembali ke halaman sebelumnya...");
+            }
+        }
+
+        public void LihatHalamanSaatIni()
+        {
+            var halaman = history.Peek();
+            Console.WriteLine("Halaman saat ini: " + (halaman?.URL ?? "Tidak ada halaman"));
         }
 
         public void TampilkanHistory()
         {
-            if (top == null) {
-                Console.WriteLine("History kosong.");
-                return;
-            }
+            Console.WriteLine("Menampilkan history:");
+            history.PrintHistory();
+        }
+    }
 
-            Node current = top;
-            int index = 1;
-            while (current != null) {
-                Console.WriteLine($"{index}. {current.Data.URL}");
-                current = current.Next;
-                index++;
-            }
+    public class Program
+    {
+        public static void Main()
+        {
+            Browser browser = new Browser();
+            browser.KunjungiHalaman("google.com");
+            browser.KunjungiHalaman("example.com");
+            browser.KunjungiHalaman("stackoverflow.com");
+            browser.LihatHalamanSaatIni();
+            browser.Kembali();
+            browser.LihatHalamanSaatIni();
+            browser.TampilkanHistory();
         }
     }
 }

@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Solution.Palindrome
 {
@@ -6,16 +8,19 @@ namespace Solution.Palindrome
     {
         public static bool CekPalindrom(string input)
         {
-            string normalisasi = new string(input.ToLower().Where(char.IsLetter).ToArray());
-            Stack<char> stack = new Stack<char>();
-            foreach (char c in normalisasi) {
-                stack.Push(c);
-            }
+            string cleaned = new string(input
+                .Where(char.IsLetterOrDigit)
+                .Select(char.ToLower)
+                .ToArray());
 
-            foreach (char c in normalisasi) {
-                if (stack.Count == 0 || stack.Pop() != c) {
+            Stack<char> stack = new Stack<char>();
+            foreach (char c in cleaned)
+                stack.Push(c);
+
+            foreach (char c in cleaned)
+            {
+                if (c != stack.Pop())
                     return false;
-                }
             }
 
             return true;
