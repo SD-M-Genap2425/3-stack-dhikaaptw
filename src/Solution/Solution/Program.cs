@@ -9,25 +9,25 @@ internal class Program
     static void Main(string[] args)
     {
         // Browser history
-        Browser browser = new Browser();
-        browser.KunjungiHalaman("google.com");
-        browser.KunjungiHalaman("example.com");
-        browser.KunjungiHalaman("stackoverflow.com");
-        browser.LihatHalamanSaatIni();
-        browser.Kembali();
-        browser.LihatHalamanSaatIni();
-        browser.TampilkanHistory();
+        var historyManager = new HistoryManager();
+            historyManager.KunjungiHalaman("google.com");
+            historyManager.KunjungiHalaman("example.com");
+        var historyManager1 = new HistoryManager();
+            historyManager1.KunjungiHalaman("google.com");
+            historyManager1.KunjungiHalaman("example.com");
+            var previousPage = historyManager1.Kembali();
         
         // Bracket validator
         var validator = new BracketValidator();
-        Console.WriteLine($"Ekspresi '[](){{}}' valid? {validator.ValidasiEkspresi("[{}](){}")}");
-        Console.WriteLine($"Ekspresi '(]' valid? {validator.ValidasiEkspresi("")}");
+        var expression = "{[()]}";
+        bool isValid = validator.ValidasiEkspresi(expression);
+
         
+
         //Palindrome Checker
-        Console.WriteLine(PalindromeChecker.CekPalindrom("Kasur ini rusak"));
-        Console.WriteLine(PalindromeChecker.CekPalindrom("Ibu Ratna antar ubi"));
-        Console.WriteLine(PalindromeChecker.CekPalindrom("Hello World"));
-        
+        var input = "Kasur ini rusak";
+        var result = PalindromeChecker.CekPalindrom(input);
+
 
     }
 }
